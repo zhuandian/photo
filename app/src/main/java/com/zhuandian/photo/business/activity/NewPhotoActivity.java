@@ -20,6 +20,8 @@ import com.luck.picture.lib.entity.LocalMedia;
 import com.zhuandian.base.BaseActivity;
 import com.zhuandian.photo.R;
 import com.zhuandian.photo.adapter.PhotoAdapter;
+import com.zhuandian.photo.entity.LabelEntity;
+import com.zhuandian.photo.entity.LocalEntity;
 import com.zhuandian.photo.entity.PhotoEntity;
 import com.zhuandian.photo.entity.UserEntity;
 import com.zhuandian.photo.utils.ImageToBase64;
@@ -32,9 +34,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadFileListener;
 
@@ -88,12 +92,54 @@ public class NewPhotoActivity extends BaseActivity {
         }
     }
 
+
+    private void insertPhotoLabel2Sever() {
+        BmobQuery<LabelEntity> query = new BmobQuery<>();
+        query.findObjects(new FindListener<LabelEntity>() {
+            @Override
+            public void done(List<LabelEntity> list, BmobException e) {
+                if (list.size() > 0) {
+                    boolean isHaveLocal = false;
+                    for (LabelEntity labelEntity : list) {
+                        if (labelEntity.getLabelName().equals(LocationUtils.LOCATION_STR)) {
+                            isHaveLocal = true;
+                            break;
+                        }
+                    }
+
+                    if (!isHaveLocal){
+                        LabelEntity labelEntity = new LabelEntity();
+                        labelEntity.setLabelName(etPhotoLabel.getText().toString());
+                        labelEntity.save(new SaveListener<String>() {
+                            @Override
+                            public void done(String s, BmobException e) {
+
+                            }
+                        });
+                    }
+
+
+                } else {
+                    LabelEntity labelEntity = new LabelEntity();
+                    labelEntity.setLabelName(etPhotoLabel.getText().toString());
+                    labelEntity.save(new SaveListener<String>() {
+                        @Override
+                        public void done(String s, BmobException e) {
+
+                        }
+                    });
+                }
+            }
+        });
+    }
     private void uploadPhoto() {
         String label = etPhotoLabel.getText().toString();
         if (TextUtils.isEmpty(label)){
             Toast.makeText(this, "请先输入照片标签", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        insertPhotoLabel2Sever();
 
         for (int i = 0; i < mDatas.size(); i++) {
             mDatas.get(i).setPhotoLabel(label);

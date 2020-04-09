@@ -18,12 +18,19 @@ import com.zhuandian.photo.adapter.HomePageAdapter;
 import com.zhuandian.photo.business.fragment.PhotoFragment;
 import com.zhuandian.photo.business.fragment.HomeFragment;
 import com.zhuandian.photo.business.fragment.MineFragment;
+import com.zhuandian.photo.entity.LocalEntity;
+import com.zhuandian.photo.utils.LocationUtils;
 import com.zhuandian.photo.utils.MyLocationListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
 
 public class MainActivity extends BaseActivity {
 
@@ -58,6 +65,47 @@ public class MainActivity extends BaseActivity {
 
         vpHome.setCurrentItem(PAGE_HOME);
         initBottomTab();
+        insertLocation2Sever();
+    }
+
+    private void insertLocation2Sever() {
+        BmobQuery<LocalEntity> query = new BmobQuery<>();
+        query.findObjects(new FindListener<LocalEntity>() {
+            @Override
+            public void done(List<LocalEntity> list, BmobException e) {
+                if (list.size() > 0) {
+                    boolean isHaveLocal = false;
+                    for (LocalEntity localEntity : list) {
+                        if (localEntity.getLocalName().equals(LocationUtils.LOCATION_STR)) {
+                            isHaveLocal = true;
+                            break;
+                        }
+                    }
+
+                    if (!isHaveLocal){
+                        LocalEntity localEntity = new LocalEntity();
+                        localEntity.setLocalName(LocationUtils.LOCATION_STR);
+                        localEntity.save(new SaveListener<String>() {
+                            @Override
+                            public void done(String s, BmobException e) {
+
+                            }
+                        });
+                    }
+
+
+                } else {
+                    LocalEntity localEntity = new LocalEntity();
+                    localEntity.setLocalName(LocationUtils.LOCATION_STR);
+                    localEntity.save(new SaveListener<String>() {
+                        @Override
+                        public void done(String s, BmobException e) {
+
+                        }
+                    });
+                }
+            }
+        });
     }
 
 
@@ -113,7 +161,7 @@ public class MainActivity extends BaseActivity {
         myListener.setLocationSuccess(new MyLocationListener.onLocationSuccess() {
             @Override
             public void onSuccess(String location) {
-                Toast.makeText(MainActivity.this, String.format("根据我们的系统定位，您现在位于\n%s\n，系统根据您的地理位置，为您做出了相应的内容推荐，请您尽情享用...", location), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, String.format("根据我们的系统定位，您现在位于\n%s\n，系统根据您的地理位置，为您做出了相应的内容推荐，请您尽情享用...", location), Toast.LENGTH_SHORT).show();
             }
         });
     }

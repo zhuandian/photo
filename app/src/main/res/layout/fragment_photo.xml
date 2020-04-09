@@ -19,8 +19,8 @@
 
         <ImageView
             android:id="@+id/iv_new_photo"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_gravity="bottom|right"
             android:layout_margin="10dp"
             android:src="@drawable/ic_camera"

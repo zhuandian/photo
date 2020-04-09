@@ -17,6 +17,7 @@ import com.zhuandian.photo.MainActivity;
 import com.zhuandian.photo.R;
 
 import com.zhuandian.photo.business.PersonalDataActivity;
+import com.zhuandian.photo.business.activity.PhotoFilterActivity;
 import com.zhuandian.photo.business.login.LoginActivity;
 import com.zhuandian.photo.entity.UserEntity;
 import com.zhuandian.photo.utils.PictureSelectorUtils;
@@ -66,9 +67,9 @@ public class MineFragment extends BaseFragment {
             case R.id.iv_header:
                 PictureSelectorUtils.selectImg(PictureSelector.create(this), 1);
                 break;
-//            case R.id.tv_history:
-//                startActivity(new Intent(actitity, ExpressHistoryActivity.class));
-//                break;
+            case R.id.tv_my_history:
+                startActivity(new Intent(actitity, PhotoFilterActivity.class));
+                break;
             case R.id.tv_my_photo:
                 ((MainActivity) actitity).setCurrentPage(MainActivity.PAGE_PHOTO);
                 break;
