@@ -46,6 +46,7 @@
 
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -61,6 +62,15 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".business.login.LoginActivity">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <activity android:name=".business.login.UserRegisterActivity"/>
+        <activity android:name=".business.PersonalDataActivity"/>
 
         <service
             android:name="com.baidu.location.f"
@@ -71,6 +81,10 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="G6jQ4bRUHIjQYNnzQt6WvwXErsSaPsyo"></meta-data>
 
+
+        <provider
+            android:name="cn.bmob.v3.util.BmobContentProvider"
+            android:authorities="com.zhuandian.photo.BmobContentProvider" />
     </application>
 
 </manifest>

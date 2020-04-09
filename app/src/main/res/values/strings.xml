@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">photo</string>
+    <string name="app_name">云相册</string>
+    <string name="app_info">智能云相册系统</string>
+
 </resources>
