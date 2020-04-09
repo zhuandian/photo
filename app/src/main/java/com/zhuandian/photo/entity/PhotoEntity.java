@@ -5,89 +5,43 @@ import cn.bmob.v3.BmobObject;
 /**
  * desc :
  * author：xiedong
- * date：2020/03/21
  */
 public class PhotoEntity extends BmobObject {
-    private int state;  //1，正常，2.超时
-    private String Type;
-    private String title;
-    private String content;
-    private String endTime;
-    private String userId;
-    private String local;
-    private String expressId;
-    private String password;
+   private String photoUrl;
+   private String photoLocal;
+   private String photoUserId;
+   private String photoLabel;
 
-    public String getLocal() {
-        return local;
+
+    public String getPhotoLabel() {
+        return photoLabel;
     }
 
-    public void setLocal(String local) {
-        this.local = local;
+    public void setPhotoLabel(String photoLabel) {
+        this.photoLabel = photoLabel;
     }
 
-    public String getExpressId() {
-        return expressId;
+    public String getPhotoUrl() {
+        return photoUrl;
     }
 
-    public void setExpressId(String expressId) {
-        this.expressId = expressId;
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPhotoLocal() {
+        return photoLocal;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPhotoLocal(String photoLocal) {
+        this.photoLocal = photoLocal;
     }
 
-    public String getEndTime() {
-        return endTime;
+    public String getPhotoUserId() {
+        return photoUserId;
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
-    }
-
-
-    public String getType() {
-        return Type;
-    }
-
-    public void setType(String type) {
-        this.Type = type;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
+    public void setPhotoUserId(String photoUserId) {
+        this.photoUserId = photoUserId;
     }
 }

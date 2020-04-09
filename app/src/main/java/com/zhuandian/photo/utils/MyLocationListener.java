@@ -24,12 +24,12 @@ public class MyLocationListener extends BDAbstractLocationListener {
         String district = location.getDistrict();    //获取区县
         String street = location.getStreet();    //获取街道信息
 
-        LocationUtils.LOCATION_STR = addr;
+        LocationUtils.LOCATION_STR = city;
         if (locationSuccess != null) {
-            locationSuccess.onSuccess(addr);
+            locationSuccess.onSuccess(city);
         }
 
-        System.out.println(addr+"--------------------");
+        System.out.println(city+"--------------------");
     }
 
     public interface onLocationSuccess {
