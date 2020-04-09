@@ -19,6 +19,7 @@ import com.zhuandian.photo.R;
 import com.zhuandian.photo.business.PersonalDataActivity;
 import com.zhuandian.photo.business.activity.PhotoFilterActivity;
 import com.zhuandian.photo.business.login.LoginActivity;
+import com.zhuandian.photo.entity.PhotoEntity;
 import com.zhuandian.photo.entity.UserEntity;
 import com.zhuandian.photo.utils.PictureSelectorUtils;
 import com.zhuandian.view.CircleImageView;
@@ -27,7 +28,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 
 /**
  * desc :
@@ -39,7 +43,10 @@ public class MineFragment extends BaseFragment {
     CircleImageView ivHeader;
     @BindView(R.id.tv_nick_name)
     TextView tvNickName;
+    @BindView(R.id.tv_photo_count)
+    TextView tvPhotoCount;
     private SharedPreferences sharedPreferences;
+    private UserEntity userEntity;
 
 
     @Override
@@ -49,16 +56,31 @@ public class MineFragment extends BaseFragment {
 
     @Override
     protected void initView() {
-
+        userEntity = BmobUser.getCurrentUser(UserEntity.class);
         sharedPreferences = actitity.getSharedPreferences("config", Context.MODE_PRIVATE);
-        String headerPath = sharedPreferences.getString("header_path", "");
+        String headerPath = sharedPreferences.getString(userEntity.getObjectId(), "");
         if (!headerPath.isEmpty()) {
             decodePath2Bitmap(headerPath);
         }
-        UserEntity userEntity = BmobUser.getCurrentUser(UserEntity.class);
+
         if (userEntity != null) {
             tvNickName.setText(userEntity.getNikeName() == null ? userEntity.getUsername() : userEntity.getNikeName());
         }
+
+        initPhotoCount();
+    }
+
+    private void initPhotoCount() {
+        BmobQuery<PhotoEntity> query = new BmobQuery<>();
+        query.addWhereEqualTo("photoUserId", userEntity.getObjectId());
+        query.findObjects(new FindListener<PhotoEntity>() {
+            @Override
+            public void done(List<PhotoEntity> list, BmobException e) {
+                if (e == null && list.size() > 0) {
+                    tvPhotoCount.setText("共上传：" + list.size() + " 张图片");
+                }
+            }
+        });
     }
 
     @OnClick({R.id.iv_header, R.id.tv_nick_name, R.id.tv_more_setting, R.id.tv_logout, R.id.tv_my_history, R.id.tv_my_photo})
@@ -93,7 +115,7 @@ public class MineFragment extends BaseFragment {
                 if (selectList.size() > 0) {
                     String imagePath = selectList.get(0).getCompressPath();
                     sharedPreferences = actitity.getSharedPreferences("config", Context.MODE_PRIVATE);
-                    sharedPreferences.edit().putString("header_path", imagePath).commit();
+                    sharedPreferences.edit().putString(userEntity.getObjectId(), imagePath).commit();
                     decodePath2Bitmap(imagePath);
                 }
             }

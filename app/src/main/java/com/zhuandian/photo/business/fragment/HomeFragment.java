@@ -1,6 +1,7 @@
 package com.zhuandian.photo.business.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.widget.ImageView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,14 +15,15 @@ import com.youth.banner.loader.ImageLoader;
 import com.zhuandian.base.BaseFragment;
 import com.zhuandian.photo.R;
 import com.zhuandian.photo.adapter.PhotoAdapter;
+import com.zhuandian.photo.business.activity.PhotoFilterActivity;
 import com.zhuandian.photo.entity.PhotoEntity;
 import com.zhuandian.photo.entity.UserEntity;
-
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
@@ -40,24 +42,10 @@ public class HomeFragment extends BaseFragment {
     RecyclerView rvList;
     private List<PhotoEntity> mDatas = new ArrayList<>();
     private PhotoAdapter photoAdapter;
-    List<String> images = new ArrayList<String>() {
-        {
-            add("http://img.zcool.cn/community/0114a856640b6d32f87545731c076a.jpg");
-            add("http://img.zcool.cn/community/0166c756e1427432f875520f7cc838.jpg");
-            add("http://img.zcool.cn/community/018fdb56e1428632f875520f7b67cb.jpg");
-            add("http://img.zcool.cn/community/01c8dc56e1428e6ac72531cbaa5f2c.jpg");
-        }
-    };
+    List<String> images = new ArrayList<String>();
 
     //设置图片标题:自动对应
-    List<String> titles = new ArrayList<String>() {
-        {
-            add("十大星级品牌联盟");
-            add("全场2折起");
-            add("嗨购5折不要停");
-            add("双12趁现在");
-        }
-    };
+    List<String> titles = new ArrayList<String>();
 
     @Override
     protected int getLayoutId() {
@@ -69,7 +57,6 @@ public class HomeFragment extends BaseFragment {
         photoAdapter = new PhotoAdapter(mDatas, actitity);
         rvList.setAdapter(photoAdapter);
         rvList.setLayoutManager(new LinearLayoutManager(actitity));
-        initBanner();
         initDataList();
     }
 
@@ -97,9 +84,9 @@ public class HomeFragment extends BaseFragment {
 
     private void initDataList() {
         BmobQuery<PhotoEntity> query = new BmobQuery<>();
-        query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);
-        query.addWhereEqualTo("userId", BmobUser.getCurrentUser(UserEntity.class).getObjectId());
-        query.setLimit(3);
+//        query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);
+        query.addWhereEqualTo("photoUserId", BmobUser.getCurrentUser(UserEntity.class).getObjectId());
+        query.setLimit(9);
         query.findObjects(new FindListener<PhotoEntity>() {
             @Override
             public void done(List<PhotoEntity> list, BmobException e) {
@@ -107,8 +94,13 @@ public class HomeFragment extends BaseFragment {
                     if (list.size() > 0) {
                         for (int i = 0; i < list.size(); i++) {
                             mDatas.add(list.get(i));
+                            if (i > 5 && i < 9) {
+                                images.add(list.get(i).getPhotoUrl());
+                                titles.add("");
+                            }
                         }
                         photoAdapter.notifyDataSetChanged();
+                        initBanner();
                     }
                 }
             }
@@ -116,4 +108,8 @@ public class HomeFragment extends BaseFragment {
     }
 
 
+    @OnClick(R.id.tv_search)
+    public void onViewClicked() {
+        startActivity(new Intent(actitity, PhotoFilterActivity.class));
+    }
 }
