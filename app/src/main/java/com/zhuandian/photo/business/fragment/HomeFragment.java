@@ -86,6 +86,7 @@ public class HomeFragment extends BaseFragment {
         BmobQuery<PhotoEntity> query = new BmobQuery<>();
 //        query.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);
         query.addWhereEqualTo("photoUserId", BmobUser.getCurrentUser(UserEntity.class).getObjectId());
+        query.order("-createdAt");
         query.setLimit(9);
         query.findObjects(new FindListener<PhotoEntity>() {
             @Override

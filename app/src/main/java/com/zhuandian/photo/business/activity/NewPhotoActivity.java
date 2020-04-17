@@ -101,7 +101,7 @@ public class NewPhotoActivity extends BaseActivity {
                 if (list.size() > 0) {
                     boolean isHaveLocal = false;
                     for (LabelEntity labelEntity : list) {
-                        if (labelEntity.getLabelName().equals(LocationUtils.LOCATION_STR)) {
+                        if (labelEntity.getLabelName().equals(etPhotoLabel.getText().toString())) {
                             isHaveLocal = true;
                             break;
                         }

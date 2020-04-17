@@ -13,24 +13,9 @@
 
         <include layout="@layout/layout_top_bar" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:text="分类"
-            android:textColor="@color/color_333333"
-            android:textSize="20sp" />
 
-        <RadioGroup
-            android:id="@+id/rg_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="horizontal" />
 
         <TextView
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="25dp"
@@ -39,7 +24,6 @@
             android:textSize="20sp" />
 
         <RadioGroup
-            android:visibility="gone"
             android:id="@+id/rg_local"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -9,11 +9,7 @@ import com.zhuandian.base.BaseFragment;
 
 import java.util.List;
 
-/**
- * desc :
- * author：xiedong
- * date：2020/03/03
- */
+//多 Fragment 页面的横向滑动
 public class HomePageAdapter extends FragmentPagerAdapter {
     List<BaseFragment> fragments;
 

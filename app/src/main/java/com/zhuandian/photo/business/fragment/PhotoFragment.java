@@ -84,13 +84,13 @@ public class PhotoFragment extends BaseFragment {
 
 
     private void loadDatas() {
-        currentCount = currentCount + 10;
+//        currentCount = currentCount + 10;
         BmobQuery<PhotoEntity> query = new BmobQuery<>();
 
         query.order("-updatedAt");
         query.addWhereEqualTo("photoUserId", BmobUser.getCurrentUser(UserEntity.class).getObjectId());
-        query.setLimit(10);
-        query.setSkip(currentCount);
+//        query.setLimit(10);
+//        query.setSkip(currentCount);
 
         query.findObjects(new FindListener<PhotoEntity>() {
             @Override
