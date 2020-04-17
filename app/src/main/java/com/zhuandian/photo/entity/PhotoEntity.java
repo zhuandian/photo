@@ -1,5 +1,7 @@
 package com.zhuandian.photo.entity;
 
+import java.util.List;
+
 import cn.bmob.v3.BmobObject;
 
 /**
@@ -10,14 +12,14 @@ public class PhotoEntity extends BmobObject {
    private String photoUrl;
    private String photoLocal;
    private String photoUserId;
-   private String photoLabel;
+   private List<String> photoLabel;
 
 
-    public String getPhotoLabel() {
+    public List<String> getPhotoLabel() {
         return photoLabel;
     }
 
-    public void setPhotoLabel(String photoLabel) {
+    public void setPhotoLabel(List<String> photoLabel) {
         this.photoLabel = photoLabel;
     }
 

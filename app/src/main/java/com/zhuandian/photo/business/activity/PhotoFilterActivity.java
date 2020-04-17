@@ -1,11 +1,13 @@
 package com.zhuandian.photo.business.activity;
 
-import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,10 +21,11 @@ import com.zhuandian.photo.entity.PhotoEntity;
 import com.zhuandian.photo.entity.UserEntity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
@@ -49,7 +52,7 @@ public class PhotoFilterActivity extends BaseActivity {
     private List<PhotoEntity> mDatas = new ArrayList<>();
     private PhotoAdapter photoAdapter;
     private String photoLocal;
-    private String photoLabel;
+    private List<String> photoLabelList = new ArrayList<>();
 
     @Override
     protected int getLayoutId() {
@@ -62,7 +65,7 @@ public class PhotoFilterActivity extends BaseActivity {
         tvTitle.setText("照片筛选");
         photoAdapter = new PhotoAdapter(mDatas, this);
         rvList.setAdapter(photoAdapter);
-        rvList.setLayoutManager(new GridLayoutManager(this,3));
+        rvList.setLayoutManager(new GridLayoutManager(this, 3));
         initPhotoLabel();
         initPhotoLocal();
     }
@@ -100,26 +103,32 @@ public class PhotoFilterActivity extends BaseActivity {
             public void done(List<LabelEntity> list, BmobException e) {
                 if (e == null) {
                     rgType.removeAllViews();
+                    photoLabelList.clear();
 
                     for (int i = 0; i < list.size(); i++) {
-                        RadioButton radioButton = new RadioButton(PhotoFilterActivity.this);
-                        radioButton.setText(list.get(i).getLabelName());
+                        CheckBox checkBox = new CheckBox(PhotoFilterActivity.this);
+                        checkBox.setText(list.get(i).getLabelName());
                         int finalI = i;
-                        radioButton.setOnClickListener(new View.OnClickListener() {
+
+                        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                             @Override
-                            public void onClick(View v) {
-                                photoLabel = list.get(finalI).getLabelName();
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                if (isChecked) {
+                                    photoLabelList.add(list.get(finalI).getLabelName());
+                                } else {
+                                    photoLabelList.remove(list.get(finalI).getLabelName());
+                                }
                             }
                         });
-                        rgType.addView(radioButton);
+
+
+                        rgType.addView(checkBox);
                     }
 
                 }
             }
         });
     }
-
-
 
 
     @OnClick({R.id.iv_back, R.id.tv_search})
@@ -136,21 +145,31 @@ public class PhotoFilterActivity extends BaseActivity {
 
     private void initPhotoList() {
         mDatas.clear();
+        Set set = new HashSet();
         BmobQuery<PhotoEntity> query = new BmobQuery<>();
         query.order("-updatedAt");
         query.addWhereEqualTo("photoUserId", BmobUser.getCurrentUser(UserEntity.class).getObjectId());
-        query.addWhereEqualTo("photoLocal", photoLocal);
-        query.addWhereEqualTo("photoLabel", photoLabel);
-        query.setLimit(10);
+//        query.addWhereEqualTo("photoLocal", photoLocal);
+//        query.addWhereEqualTo("photoLabelList", photoLabelList);
 
         query.findObjects(new FindListener<PhotoEntity>() {
             @Override
             public void done(List<PhotoEntity> list, BmobException e) {
                 if (e == null) {
                     for (int i = 0; i < list.size(); i++) {
-                        mDatas.add(list.get(i));
+                        for (int j = 0; j < list.get(i).getPhotoLabel().size(); j++) {
+                            for (int k = 0; k < photoLabelList.size(); k++) {
+                                if (list.get(i).getPhotoLabel().get(j).equals(photoLabelList.get(k))) {
+                                    set.add(list.get(i));
+                                }
+                            }
+                        }
                     }
+                    mDatas.addAll(set);
                     photoAdapter.notifyDataSetChanged();
+                    if (mDatas.size()==0){
+                        Toast.makeText(PhotoFilterActivity.this, "未检索到图片记录...", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

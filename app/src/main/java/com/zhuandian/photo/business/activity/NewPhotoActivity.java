@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,9 +59,12 @@ public class NewPhotoActivity extends BaseActivity {
     RecyclerView rvList;
     @BindView(R.id.et_photo_label)
     EditText etPhotoLabel;
+    @BindView(R.id.rg_type)
+    RadioGroup rgType;
 
     private List<PhotoEntity> mDatas = new ArrayList<>();
     private PhotoAdapter photoAdapter;
+    private List<String> photoLabelList = new ArrayList<>();
 
     @Override
     protected int getLayoutId() {
@@ -73,12 +79,48 @@ public class NewPhotoActivity extends BaseActivity {
 
         photoAdapter = new PhotoAdapter(mDatas, this);
         rvList.setAdapter(photoAdapter);
-        rvList.setLayoutManager(new GridLayoutManager(this,3));
+        rvList.setLayoutManager(new GridLayoutManager(this, 3));
+
+        initPhotoLabel();
     }
 
 
+    private void initPhotoLabel() {
+        BmobQuery<LabelEntity> query = new BmobQuery<>();
+        query.findObjects(new FindListener<LabelEntity>() {
+            @Override
+            public void done(List<LabelEntity> list, BmobException e) {
+                if (e == null) {
+                    rgType.removeAllViews();
+                    photoLabelList.clear();
 
-    @OnClick({R.id.iv_back, R.id.tv_right, R.id.tv_select_photo})
+                    for (int i = 0; i < list.size(); i++) {
+                        CheckBox checkBox = new CheckBox(NewPhotoActivity.this);
+                        checkBox.setText(list.get(i).getLabelName());
+                        int finalI = i;
+
+                        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                if (isChecked) {
+                                    photoLabelList.add(list.get(finalI).getLabelName());
+                                } else {
+                                    photoLabelList.remove(list.get(finalI).getLabelName());
+                                }
+                            }
+                        });
+
+
+                        rgType.addView(checkBox);
+                    }
+
+                }
+            }
+        });
+    }
+
+
+    @OnClick({R.id.iv_back, R.id.tv_right, R.id.tv_select_photo,R.id.tv_new_label})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -89,8 +131,14 @@ public class NewPhotoActivity extends BaseActivity {
             case R.id.tv_select_photo:
                 PictureSelectorUtils.selectImg(PictureSelector.create(this), 9);
                 break;
+
+            case R.id.tv_new_label:
+                insertPhotoLabel2Sever();
+                break;
         }
     }
+
+
 
 
     private void insertPhotoLabel2Sever() {
@@ -107,42 +155,72 @@ public class NewPhotoActivity extends BaseActivity {
                         }
                     }
 
-                    if (!isHaveLocal){
+                    if (!isHaveLocal) {
                         LabelEntity labelEntity = new LabelEntity();
-                        labelEntity.setLabelName(etPhotoLabel.getText().toString());
+                        String labelName = etPhotoLabel.getText().toString();
+                        labelEntity.setLabelName(labelName);
                         labelEntity.save(new SaveListener<String>() {
                             @Override
                             public void done(String s, BmobException e) {
-
+                                CheckBox checkBox = new CheckBox(NewPhotoActivity.this);
+                                checkBox.setText(etPhotoLabel.getText().toString());
+                                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                    @Override
+                                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                        if (isChecked) {
+                                            photoLabelList.add(labelName);
+                                        } else {
+                                            photoLabelList.remove(labelName);
+                                        }
+                                    }
+                                });
+                                rgType.addView(checkBox);
+                                etPhotoLabel.setText("");
                             }
                         });
+                    }else {
+                        Toast.makeText(NewPhotoActivity.this, "当前标签已存在", Toast.LENGTH_SHORT).show();
                     }
 
 
                 } else {
                     LabelEntity labelEntity = new LabelEntity();
-                    labelEntity.setLabelName(etPhotoLabel.getText().toString());
+                    String labelName = etPhotoLabel.getText().toString();
+                    labelEntity.setLabelName(labelName);
                     labelEntity.save(new SaveListener<String>() {
                         @Override
                         public void done(String s, BmobException e) {
-
+                            CheckBox checkBox = new CheckBox(NewPhotoActivity.this);
+                            checkBox.setText(etPhotoLabel.getText().toString());
+                            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                @Override
+                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                    if (isChecked) {
+                                        photoLabelList.add(labelName);
+                                    } else {
+                                        photoLabelList.remove(labelName);
+                                    }
+                                }
+                            });
+                            rgType.addView(checkBox);
+                            etPhotoLabel.setText("");
                         }
                     });
                 }
             }
         });
     }
+
     private void uploadPhoto() {
-        String label = etPhotoLabel.getText().toString();
-        if (TextUtils.isEmpty(label)){
+        if (photoLabelList.size()<=0) {
             Toast.makeText(this, "请先输入照片标签", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        insertPhotoLabel2Sever();
+
 
         for (int i = 0; i < mDatas.size(); i++) {
-            mDatas.get(i).setPhotoLabel(label);
+            mDatas.get(i).setPhotoLabel(photoLabelList);
             mDatas.get(i).setPhotoLocal(LocationUtils.LOCATION_STR);
             mDatas.get(i).setPhotoUserId(BmobUser.getCurrentUser(UserEntity.class).getObjectId());
             int finalI = i;
@@ -150,7 +228,7 @@ public class NewPhotoActivity extends BaseActivity {
                 @Override
                 public void done(String s, BmobException e) {
                     Toast.makeText(NewPhotoActivity.this, "上传中...", Toast.LENGTH_SHORT).show();
-                    if (finalI ==mDatas.size()-1){
+                    if (finalI == mDatas.size() - 1) {
                         finish();
                     }
                 }
@@ -166,12 +244,12 @@ public class NewPhotoActivity extends BaseActivity {
             if (requestCode == PictureConfig.CHOOSE_REQUEST) {
                 mDatas.clear();
                 List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
-                for (LocalMedia localMedia:selectList){
+                for (LocalMedia localMedia : selectList) {
                     BmobFile bmobFile = new BmobFile(new File(localMedia.getPath()));
                     bmobFile.upload(new UploadFileListener() {
                         @Override
                         public void done(BmobException e) {
-                            if (e==null){
+                            if (e == null) {
                                 PhotoEntity photoEntity = new PhotoEntity();
                                 photoEntity.setPhotoUrl(bmobFile.getUrl());
                                 mDatas.add(photoEntity);

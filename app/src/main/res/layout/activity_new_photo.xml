@@ -9,6 +9,14 @@
 
     <include layout="@layout/layout_top_bar" />
 
+    <RadioGroup
+        android:id="@+id/rg_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="horizontal" />
+
 
     <EditText
         android:paddingLeft="10dp"
@@ -21,6 +29,17 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/shape_edittext_bg" />
+
+    <TextView
+        android:id="@+id/tv_new_label"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_margin="20dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="添加新标签"
+        android:textColor="@color/white" />
+
 
     <TextView
         android:id="@+id/tv_select_photo"
