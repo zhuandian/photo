@@ -1,10 +1,14 @@
 package com.zhuandian.photo.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.bumptech.glide.Glide;
 import com.luck.picture.lib.PicturePreviewActivity;
@@ -19,6 +23,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
 
 public class PhotoAdapter extends BaseAdapter<PhotoEntity, BaseViewHolder> {
 
@@ -38,10 +44,39 @@ public class PhotoAdapter extends BaseAdapter<PhotoEntity, BaseViewHolder> {
         myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(mContext, PhotoDetailActivity.class);
-                intent.putExtra("entity",photoEntity);
+                intent.putExtra("entity", photoEntity);
                 mContext.startActivity(intent);
+            }
+        });
+
+        myViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new AlertDialog.Builder(mContext)
+                        .setTitle("确认删除？")
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                photoEntity.delete(new UpdateListener() {
+                                    @Override
+                                    public void done(BmobException e) {
+                                        if (e == null) {
+                                            dialog.dismiss();
+                                            Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        })
+                        .show();
+                return true;
             }
         });
 

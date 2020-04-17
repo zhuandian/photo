@@ -54,6 +54,7 @@
         </activity>
         <activity android:name=".business.login.UserRegisterActivity" />
         <activity android:name=".business.PersonalDataActivity" />
+        <activity android:name=".business.activity.FootActivity"/>
 
         <service
             android:name="com.baidu.location.f"
