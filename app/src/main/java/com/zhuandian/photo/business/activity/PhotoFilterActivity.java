@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.zhuandian.base.BaseActivity;
 import com.zhuandian.photo.R;
 import com.zhuandian.photo.adapter.PhotoAdapter;
@@ -21,6 +22,7 @@ import com.zhuandian.photo.entity.PhotoEntity;
 import com.zhuandian.photo.entity.UserEntity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +44,7 @@ public class PhotoFilterActivity extends BaseActivity {
     @BindView(R.id.tv_right)
     TextView tvRight;
     @BindView(R.id.rg_type)
-    RadioGroup rgType;
+    FlexboxLayout rgType;
     @BindView(R.id.rg_local)
     RadioGroup rgLocal;
     @BindView(R.id.tv_search)
@@ -157,17 +159,22 @@ public class PhotoFilterActivity extends BaseActivity {
             public void done(List<PhotoEntity> list, BmobException e) {
                 if (e == null) {
                     for (int i = 0; i < list.size(); i++) {
-                        for (int j = 0; j < list.get(i).getPhotoLabel().size(); j++) {
-                            for (int k = 0; k < photoLabelList.size(); k++) {
-                                if (list.get(i).getPhotoLabel().get(j).equals(photoLabelList.get(k))) {
-                                    set.add(list.get(i));
-                                }
-                            }
+//                        for (int j = 0; j < list.get(i).getPhotoLabel().size(); j++) {
+//                            for (int k = 0; k < photoLabelList.size(); k++) {
+//                                if (list.get(i).getPhotoLabel().get(j).equals(photoLabelList.get(k))) {
+//                                    set.add(list.get(i));
+//                                }
+//                            }
+
+
+                        if (list.get(i).getPhotoLabel().containsAll(photoLabelList)) {
+                            mDatas.add(list.get(i));
+
                         }
                     }
-                    mDatas.addAll(set);
+//                    mDatas.addAll(set);
                     photoAdapter.notifyDataSetChanged();
-                    if (mDatas.size()==0){
+                    if (mDatas.size() == 0) {
                         Toast.makeText(PhotoFilterActivity.this, "未检索到图片记录...", Toast.LENGTH_SHORT).show();
                     }
                 }

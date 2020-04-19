@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
@@ -60,7 +61,7 @@ public class NewPhotoActivity extends BaseActivity {
     @BindView(R.id.et_photo_label)
     EditText etPhotoLabel;
     @BindView(R.id.rg_type)
-    RadioGroup rgType;
+    FlexboxLayout rgType;
 
     private List<PhotoEntity> mDatas = new ArrayList<>();
     private PhotoAdapter photoAdapter;
